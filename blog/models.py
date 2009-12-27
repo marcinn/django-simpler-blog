@@ -2,13 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-from utilities.models import AutoSlugField
-# Create your models here.
-
 
 class PublishedEntriesManager(models.Manager):
     def get_query_set(self):
         return super(PublishedEntriesManager, self).get_query_set().filter(draft=False)
+
 
 class Entry(models.Model):
     """
@@ -24,7 +22,7 @@ class Entry(models.Model):
     draft = models.BooleanField(_('if checked this entry will be a draft and will not be published'), default=True)
     last_modified = models.DateTimeField(_(u'date modified'), auto_now=True)
     title = models.CharField(max_length='200', unique_for_date='published')
-    slug = AutoSlugField(max_length='200')
+    slug = models.SlugField(max_length='200')
     body = models.TextField()
     objects = models.Manager()
     public = PublishedEntriesManager()
@@ -89,6 +87,7 @@ class Entry(models.Model):
         verbose_name_plural = _('Entries')
         verbose_name = _('Entry')
         get_latest_by = 'published'
+
 
 class Image(models.Model):
     entry = models.ForeignKey(Entry)
